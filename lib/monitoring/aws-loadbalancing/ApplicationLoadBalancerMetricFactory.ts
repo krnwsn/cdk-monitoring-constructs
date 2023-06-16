@@ -43,7 +43,7 @@ export class ApplicationLoadBalancerMetricFactory
       this.applicationTargetGroup.metrics.healthyHostCount({
         label: "Healthy Tasks",
         color: HealthyMetricColor,
-        statistic: MetricStatistic.MIN,
+        statistic: MetricStatistic.MAX,
       })
     );
   }
@@ -53,7 +53,7 @@ export class ApplicationLoadBalancerMetricFactory
       this.applicationTargetGroup.metrics.unhealthyHostCount({
         label: "Unhealthy Tasks",
         color: UnhealthyMetricColor,
-        statistic: MetricStatistic.MAX,
+        statistic: MetricStatistic.MIN,
       })
     );
   }
