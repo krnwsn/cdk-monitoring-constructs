@@ -102,6 +102,19 @@ interface BaseLoadBalancedFargateServiceMonitoringProps
     string,
     MinProcessedBytesThreshold
   >;
+
+  /**
+   * Invert the statistics of `HealthyHostCount` and `UnHealthyHostCount`.
+   *
+   * When `invertLoadBalancerStatisticsOfTaskCountEnabled` is set to false, the minimum of `HealthyHostCount` and the maximum of `UnHealthyHostCount` are monitored.
+   * When `invertLoadBalancerStatisticsOfTaskCountEnabled` is set to true, the maximum of `HealthyHostCount` and the minimum of `UnHealthyHostCount` are monitored.
+   *
+   * `invertLoadBalancerStatisticsOfTaskCountEnabled` is recommended to set to true as per the guidelines at
+https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-cloudwatch-metrics.html#metric-statistics
+   *
+   * @default false
+   */
+  readonly invertLoadBalancerStatisticsOfTaskCountEnabled?: boolean;
 }
 
 /**
@@ -137,6 +150,19 @@ export interface CustomFargateServiceMonitoringProps
   readonly fargateService: FargateService;
   readonly loadBalancer?: IApplicationLoadBalancer | INetworkLoadBalancer;
   readonly targetGroup?: IApplicationTargetGroup | INetworkTargetGroup;
+
+  /**
+   * Invert the statistics of `HealthyHostCount` and `UnHealthyHostCount`.
+   *
+   * When `invertLoadBalancerStatisticsOfTaskCountEnabled` is set to false, the minimum of `HealthyHostCount` and the maximum of `UnHealthyHostCount` are monitored.
+   * When `invertLoadBalancerStatisticsOfTaskCountEnabled` is set to true, the maximum of `HealthyHostCount` and the minimum of `UnHealthyHostCount` are monitored.
+   *
+   * `invertLoadBalancerStatisticsOfTaskCountEnabled` is recommended to set to true as per the guidelines at
+https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-cloudwatch-metrics.html#metric-statistics
+   *
+   * @default false
+   */
+  readonly invertLoadBalancerStatisticsOfTaskCountEnabled?: boolean;
 }
 
 export class FargateServiceMonitoring extends Monitoring {
@@ -190,7 +216,8 @@ export class FargateServiceMonitoring extends Monitoring {
       this.loadBalancerMetricFactory = createLoadBalancerMetricFactory(
         this.metricFactory,
         props.loadBalancer!,
-        props.targetGroup!
+        props.targetGroup!,
+        props.invertLoadBalancerStatisticsOfTaskCountEnabled
       );
       this.healthyTaskCountMetric =
         this.loadBalancerMetricFactory.metricHealthyTaskCount();
